@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class Warrior : Player
 {
-    public Warrior(int health, int power, string name)
-    {
-        this.Health = health;
-        this.Power = power;
-        this.Name = name;
-    }
+    //public Warrior(int health, int power, string name)
+    //{
+    //    this.Health = health;
+    //    this.Power = power;
+    //    this.Name = name;
+    //}
 }

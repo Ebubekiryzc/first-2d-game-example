@@ -2,27 +2,87 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player
+public class Player : MonoBehaviour
 {
-    private int _health;
-    private int _power;
-    private string _name;
+    [SerializeField]
+    private float moveForce = 10f;
 
-    public int Health
+    [SerializeField]
+    private float jumpForce = 11f;
+
+    private float _movementX;
+    private bool _isGrounded;
+
+    private Rigidbody2D _rigidbody2D;
+    private Animator _animator;
+    private SpriteRenderer _spriteRenderer;
+
+    private string WALK_ANIMATION = "Walk";
+    private string JUMP_ANIMATION = "Jump";
+    private string GROUND_TAG = "Ground";
+
+    private void Awake()
     {
-        get { return _health; }
-        set { _health = value; }
+        _rigidbody2D = GetComponent<Rigidbody2D>();
+        _animator = GetComponent<Animator>();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    public int Power
+    private void Start()
     {
-        get { return _power; }
-        set { _power = value; }
+
     }
 
-    public string Name
+    // Her frame için bir kere çaðrýlýr
+    private void Update()
     {
-        get { return _name; }
-        set { _name = value; }
+        PlayerMoveKeyboard();
+        PlayerJump();
+        AnimatePlayer();
+    }
+
+    void PlayerMoveKeyboard()
+    {
+        _movementX = Input.GetAxisRaw("Horizontal");
+        // Artý ise yukarý ya da saða, eksi ise aþaðý ya da sola
+
+        transform.position += new Vector3(_movementX, 0, 0) * Time.deltaTime * moveForce;
+    }
+
+    void AnimatePlayer()
+    {
+        if (_movementX > 0)
+        {
+            _animator.SetBool(WALK_ANIMATION, true);
+            _spriteRenderer.flipX = false;
+        }
+        else if (_movementX < 0)
+        {
+            _animator.SetBool(WALK_ANIMATION, true);
+            _spriteRenderer.flipX = true;
+        }
+        else
+        {
+            _animator.SetBool(WALK_ANIMATION, false);
+        }
+    }
+
+    void PlayerJump()
+    {
+        if (Input.GetButtonDown("Jump") && _isGrounded)
+        {
+            _isGrounded = false;
+            _animator.SetTrigger(JUMP_ANIMATION);
+            // ForceMode2D.Impulse: Anlýk bir etki oluþturmak için kullanýlýr.
+            _rigidbody2D.AddForce(new Vector2(0f, jumpForce), ForceMode2D.Impulse);
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag(GROUND_TAG))
+        {
+            _isGrounded = true;
+        }
     }
 }
