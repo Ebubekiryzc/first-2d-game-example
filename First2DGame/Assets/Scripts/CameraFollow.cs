@@ -27,6 +27,8 @@ public class CameraFollow : MonoBehaviour
 
     private void FollowPlayer()
     {
+        if (!_player) return;
+
         _temporaryPosition = transform.position;
         _temporaryPosition.x = _player.position.x;
 
